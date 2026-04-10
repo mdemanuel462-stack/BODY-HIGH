@@ -1,0 +1,138 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.12.1
+2 info using node@v25.8.2
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm install
+7 verbose argv "install"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-04-03T00_05_04_785Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-04-03T00_05_04_785Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+12 silly logfile done cleaning log files
+13 silly idealTree buildDeps
+14 silly reify moves {}
+15 silly audit bulk request {
+15 silly audit   '@discordjs/builders': [ '1.14.0' ],
+15 silly audit   '@discordjs/collection': [ '1.5.3', '2.1.1' ],
+15 silly audit   '@discordjs/formatters': [ '0.6.2' ],
+15 silly audit   '@discordjs/rest': [ '2.6.1' ],
+15 silly audit   '@sapphire/snowflake': [ '3.5.5', '3.5.3' ],
+15 silly audit   undici: [ '6.24.1', '6.21.3' ],
+15 silly audit   '@discordjs/util': [ '1.2.0' ],
+15 silly audit   '@discordjs/ws': [ '1.2.3' ],
+15 silly audit   '@sapphire/async-queue': [ '1.5.5' ],
+15 silly audit   '@sapphire/shapeshift': [ '4.0.0' ],
+15 silly audit   '@types/node': [ '25.5.0' ],
+15 silly audit   '@types/ws': [ '8.18.1' ],
+15 silly audit   '@vladfrangu/async_event_emitter': [ '2.4.7' ],
+15 silly audit   'discord-api-types': [ '0.38.43' ],
+15 silly audit   'discord.js': [ '14.25.1' ],
+15 silly audit   dotenv: [ '17.4.0' ],
+15 silly audit   'fast-deep-equal': [ '3.1.3' ],
+15 silly audit   lodash: [ '4.17.23' ],
+15 silly audit   'lodash.snakecase': [ '4.1.1' ],
+15 silly audit   'magic-bytes.js': [ '1.13.0' ],
+15 silly audit   'ts-mixer': [ '6.0.4' ],
+15 silly audit   tslib: [ '2.8.1' ],
+15 silly audit   'undici-types': [ '7.18.2' ],
+15 silly audit   ws: [ '8.20.0' ]
+15 silly audit }
+16 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 743ms
+17 silly audit report {
+17 silly audit report   undici: [
+17 silly audit report     {
+17 silly audit report       id: 1112496,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-g9mf-h72j-4rw9',
+17 silly audit report       title: 'Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion',
+17 silly audit report       severity: 'moderate',
+17 silly audit report       vulnerable_versions: '<6.23.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1114592,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-f269-vfmq-vjvj',
+17 silly audit report       title: 'Undici: Malicious WebSocket 64-bit length overflows parser and crashes the client',
+17 silly audit report       severity: 'high',
+17 silly audit report       vulnerable_versions: '>=6.0.0 <6.24.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1114594,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-2mjp-6q6p-2qxm',
+17 silly audit report       title: 'Undici has an HTTP Request/Response Smuggling issue',
+17 silly audit report       severity: 'moderate',
+17 silly audit report       vulnerable_versions: '<6.24.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1114638,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-vrm6-8vpv-qv8q',
+17 silly audit report       title: 'Undici has Unbounded Memory Consumption in WebSocket permessage-deflate Decompression',
+17 silly audit report       severity: 'high',
+17 silly audit report       vulnerable_versions: '<6.24.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1114640,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-v9p9-hfj2-hcw8',
+17 silly audit report       title: 'Undici has Unhandled Exception in WebSocket Client Due to Invalid server_max_window_bits Validation',
+17 silly audit report       severity: 'high',
+17 silly audit report       vulnerable_versions: '<6.24.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1114642,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-4992-7rv2-5pvq',
+17 silly audit report       title: 'Undici has CRLF Injection in undici via `upgrade` option',
+17 silly audit report       severity: 'moderate',
+17 silly audit report       vulnerable_versions: '<6.24.0',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     }
+17 silly audit report   ],
+17 silly audit report   lodash: [
+17 silly audit report     {
+17 silly audit report       id: 1115806,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-r5fr-rjxr-66jc',
+17 silly audit report       title: 'lodash vulnerable to Code Injection via `_.template` imports key names',
+17 silly audit report       severity: 'high',
+17 silly audit report       vulnerable_versions: '>=4.0.0 <=4.17.23',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     },
+17 silly audit report     {
+17 silly audit report       id: 1115810,
+17 silly audit report       url: 'https://github.com/advisories/GHSA-f23m-r3pf-42rh',
+17 silly audit report       title: 'lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`',
+17 silly audit report       severity: 'moderate',
+17 silly audit report       vulnerable_versions: '<=4.17.23',
+17 silly audit report       cwe: [Array],
+17 silly audit report       cvss: [Object]
+17 silly audit report     }
+17 silly audit report   ]
+17 silly audit report }
+18 silly packumentCache corgi:https://registry.npmjs.org/undici cache-miss
+19 silly packumentCache corgi:https://registry.npmjs.org/lodash cache-miss
+20 http cache https://registry.npmjs.org/undici 78ms (cache hit)
+21 silly packumentCache corgi:https://registry.npmjs.org/undici set size:423576 disposed:false
+22 http cache https://registry.npmjs.org/lodash 119ms (cache hit)
+23 silly packumentCache corgi:https://registry.npmjs.org/lodash set size:69555 disposed:false
+24 silly packumentCache corgi:https://registry.npmjs.org/discord.js cache-miss
+25 http cache https://registry.npmjs.org/discord.js 59ms (cache hit)
+26 silly packumentCache corgi:https://registry.npmjs.org/discord.js set size:4027177 disposed:false
+27 silly packumentCache corgi:https://registry.npmjs.org/@sapphire%2fshapeshift cache-miss
+28 http cache https://registry.npmjs.org/@sapphire%2fshapeshift 29ms (cache hit)
+29 silly packumentCache corgi:https://registry.npmjs.org/@sapphire%2fshapeshift set size:1051334 disposed:false
+30 verbose cwd /data/data/com.termux/files/home
+31 verbose os Linux 5.4.210-android12-9-667307-gd9b32e55273a-ab333
+32 verbose node v25.8.2
+33 verbose npm  v11.12.1
+34 verbose exit 0
+35 info ok
