@@ -1,2 +1,16 @@
+node_modules/
 .env
-node_modules
+npm-debug.log
+package-lock.json
+
+# Termux basura
+.npm/
+.bash_history
+.config/
+
+# Git repos dentro
+bot/
+
+# Archivos innecesarios
+*.log
+*.cache
