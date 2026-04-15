@@ -735,13 +735,13 @@ save();
 
         const embed = new EmbedBuilder()
             .setColor('#EC1D1D')
-            .setTitle('🎈 Un beso en Derry...')
+            .setTitle('Un beso en Body High')
             .setDescription(
 `${message.author} ${textoRandom} ${user}
 *${name1} y ${name2} se han besado ${kissCount[key]} veces.*`
             )
             .setImage(randomGif)
-            .setFooter({ text: 'Pennywise observa...' });
+            .setFooter({ text: 'Todos observan...' });
 
         return message.channel.send({ embeds: [embed] });
     }
