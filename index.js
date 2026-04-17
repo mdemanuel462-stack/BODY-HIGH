@@ -656,26 +656,30 @@ if (message.content === '!unlock') {
         return message.reply('❌ Escribe algo.');
     }
 
-    // 🔹 Separar texto normal y embed
     const parts = full.split('|');
 
-    const contentText = parts[0]?.trim(); // texto normal
-    const embedText = parts[1]?.trim();   // embed
+    const contentText = parts[0].trim();
+    const embedText = parts.slice(1).join('|').trim();
 
     try {
-        const embed = parseEmbed(embedText, message);
+        const { embeds, components } = parseMessage(embedText, message);
+
+        if (!embeds.length && !components.length) {
+            return message.reply('❌ Mensaje vacío.');
+        }
 
         message.channel.send({
-            content: contentText || null,
-            embeds: embed ? [embed] : []
+            content: contentText,
+            embeds,
+            components
         });
 
     } catch (err) {
         console.log(err);
-        message.reply('❌ Error en el embed.');
+        message.reply('❌ Error.');
     }
 }
-    
+
     if (message.content.startsWith('!slap ')) {
         const user = message.mentions.users.first();
         if (!user) return message.reply('⚠️ Menciona a alguien.');
