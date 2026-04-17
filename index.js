@@ -698,9 +698,8 @@ if (message.content === '!unlock') {
         message.channel.send(texto);
     }
 
-// ================= EMBED =================
+// ================= EMBED DIRECTO =================
 if (message.content.startsWith('!embed')) {
-
     const full = message.content.slice(7).trim();
 
     if (!full) {
@@ -708,18 +707,16 @@ if (message.content.startsWith('!embed')) {
     }
         
     const parts = full.split('|');
-
     const contentText = parts[0].trim();
     const embedText = parts.slice(1).join('|').trim();
 
     console.log('CONTENT:', contentText);
-console.log('EMBED:', embedText);
+    console.log('EMBED:', embedText);
     
     try {
         const parsed = parseMessage(embedText) || { embeds: [], components: [] };
-
-const embeds = parsed.embeds || [];
-const components = parsed.components || [];
+        const embeds = parsed.embeds || [];
+        const components = parsed.components || [];
 
         if (!embeds.length && !components.length) {
             return message.reply('❌ Mensaje vacío.');
@@ -756,9 +753,9 @@ function parseMessage(text) {
         };
     }
 }
+
 // ================= GUARDAR EMBED =================
 if (message.content.startsWith('!saveembed')) {
-
     const args = message.content.slice(10).trim();
     const parts = args.split('|');
 
@@ -775,7 +772,7 @@ if (message.content.startsWith('!saveembed')) {
     if (fs.existsSync('./embeds.json')) {
         try {
             data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
-        } catch {
+        } catch (err) {
             data = {};
         }
     }
@@ -789,7 +786,6 @@ if (message.content.startsWith('!saveembed')) {
 
 // ================= CARGAR EMBED =================
 if (message.content.startsWith('!loadembed')) {
-
     const name = message.content.split(' ')[1];
 
     if (!name) {
@@ -804,7 +800,7 @@ if (message.content.startsWith('!loadembed')) {
 
     try {
         data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
-    } catch {
+    } catch (err) {
         return message.reply('❌ Error leyendo embeds');
     }
 
@@ -820,13 +816,13 @@ if (message.content.startsWith('!loadembed')) {
             components
         });
 
-    } } catch (err) {
+    } catch (err) {
         console.error(err);
         message.reply('❌ Error al cargar el embed.');
     }
-          }
     }
-}
+    
+        
     
     if (message.content.startsWith('!slap ')) {
         const user = message.mentions.users.first();
