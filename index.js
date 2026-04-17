@@ -286,7 +286,6 @@ if (message.content === 'test') {
 
     if (message.author.bot) return;
 
-
 if (message.content === 'ping') {
     return message.reply('pong 🏓');
 }
@@ -647,16 +646,25 @@ if (message.content === '!unlock') {
         message.channel.send(texto);
     }
 
-    if (message.content.startsWith('!embed ')) {
-        const texto = message.content.slice(7);
+    if (message.content.startsWith('!embed')) {
 
-        const embed = new EmbedBuilder()
-            .setColor('#EC1D1D')
-            .setDescription(texto);
+    const args = message.content.slice(7).trim();
 
-        message.channel.send({ embeds: [embed] });
+    if (!args) {
+        return message.reply('❌ Escribe el embed.');
     }
 
+    try {
+        const embed = parseEmbed(args, message);
+
+        message.channel.send({ embeds: [embed] });
+
+    } catch (err) {
+        console.log(err);
+        message.reply('❌ Error en el embed.');
+    }
+}
+    
     if (message.content.startsWith('!slap ')) {
         const user = message.mentions.users.first();
         if (!user) return message.reply('⚠️ Menciona a alguien.');
