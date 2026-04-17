@@ -17,14 +17,23 @@ const {
 
 const fs = require('fs');
 
+const path = './data/embeds.json';
+
+// Cargar
 function getData() {
-    return JSON.parse(fs.readFileSync('./embeds.json'));
+    if (!fs.existsSync(path)) {
+        fs.writeFileSync(path, '{}');
+    }
+
+    return JSON.parse(fs.readFileSync(path));
 }
 
+// Guardar
 function saveData(data) {
-    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
 }
 
+// Guardar embed por servidor
 function saveEmbed(guildId, name, content) {
     const data = getData();
 
@@ -35,15 +44,17 @@ function saveEmbed(guildId, name, content) {
     saveData(data);
 }
 
+// Obtener embed
 function getEmbed(guildId, name) {
     const data = getData();
     return data[guildId]?.[name];
 }
 
+// Eliminar embed
 function deleteEmbed(guildId, name) {
     const data = getData();
 
-    if (data[guildId] && data[guildId][name]) {
+    if (data[guildId]?.[name]) {
         delete data[guildId][name];
         saveData(data);
         return true;
@@ -52,13 +63,11 @@ function deleteEmbed(guildId, name) {
     return false;
 }
 
-function saveEmbed(name, content) {
-    const data = JSON.parse(fs.readFileSync('./embeds.json'));
-    data[name] = content;
-    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
-}
-
-const { parseEmbed } = require('./embedbuilder');
+module.exports = {
+    saveEmbed,
+    getEmbed,
+    deleteEmbed
+};
 
 const client = new Client({
     intents: [
