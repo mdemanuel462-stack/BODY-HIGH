@@ -712,8 +712,14 @@ if (message.content.startsWith('!embed')) {
     const contentText = parts[0].trim();
     const embedText = parts.slice(1).join('|').trim();
 
+    console.log('CONTENT:', contentText);
+console.log('EMBED:', embedText);
+    
     try {
-        const { embeds, components } = parseMessage(embedText);
+        const parsed = parseMessage(embedText) || { embeds: [], components: [] };
+
+const embeds = parsed.embeds || [];
+const components = parsed.components || [];
 
         if (!embeds.length && !components.length) {
             return message.reply('❌ Mensaje vacío.');
@@ -733,16 +739,23 @@ if (message.content.startsWith('!embed')) {
 
 // ================= FUNCIÓN =================
 function parseMessage(text) {
-    return {
-        embeds: [
-            {
-                description: text || '‎'
-            }
-        ],
-        components: []
-    };
+    try {
+        return {
+            embeds: [
+                {
+                    description: text?.trim() || '‎'
+                }
+            ],
+            components: []
+        };
+    } catch (err) {
+        console.error('Error en parseMessage:', err);
+        return {
+            embeds: [],
+            components: []
+        };
+    }
 }
-
 // ================= GUARDAR EMBED =================
 if (message.content.startsWith('!saveembed')) {
 
