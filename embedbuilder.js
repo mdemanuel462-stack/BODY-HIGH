@@ -24,11 +24,11 @@ function parseEmbed(text, message) {
     const embed = new EmbedBuilder();
 
     // TITLE
-    const title = text.match(/{title:\s*([^}]+)}/i);
+    const title = text.match(/{title:\s*([\s\S]*?)}/i);
     if (title) embed.setTitle(title[1]);
 
     // DESCRIPTION
-    const desc = text.match(/{desc:\s*([^}]+)}/i);
+    const desc = text.match(/{desc:\s*([\s\S]*?)}/i);
     if (desc) embed.setDescription(desc[1]);
 
     // COLOR
@@ -36,7 +36,7 @@ function parseEmbed(text, message) {
     if (color) embed.setColor(color[1]);
 
     // FOOTER
-    const footer = text.match(/{footer:\s*([^}]+)}/i);
+    const footer = text.match(/{footer:\s*([\s\S]*?)}/i);
     if (footer) embed.setFooter({ text: footer[1] });
 
     // IMAGE
