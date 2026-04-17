@@ -4,6 +4,7 @@ const db = require('../systems/database');
 module.exports = async (message) => {
 
     if (message.author.bot) return;
+    if (!message.guild) return; // 🔒 evita errores en DM
 
     const prefix = '!';
 
@@ -12,7 +13,14 @@ module.exports = async (message) => {
     const [cmd, ...args] = message.content.slice(prefix.length).split(' ');
 
     // ======================
-    // EMBED NORMAL
+    // TEST
+    // ======================
+    if (cmd === 'test') {
+        return message.reply('✅ Bot funcionando');
+    }
+
+    // ======================
+    // EMBED
     // ======================
     if (cmd === 'embed') {
 
@@ -65,6 +73,8 @@ module.exports = async (message) => {
 
         const name = args[0];
 
+        if (!name) return message.reply('❌ Escribe el nombre');
+
         const data = db.getEmbed(message.guild.id, name);
 
         if (!data) return message.reply('❌ No existe');
@@ -80,6 +90,8 @@ module.exports = async (message) => {
     if (cmd === 'deleteembed') {
 
         const name = args[0];
+
+        if (!name) return message.reply('❌ Escribe el nombre');
 
         if (!db.deleteEmbed(message.guild.id, name)) {
             return message.reply('❌ No existe');
