@@ -820,9 +820,7 @@ if (message.content.startsWith('!loadembed')) {
         console.error(err);
         message.reply('❌ Error al cargar el embed.');
     }
-    }
     
-        
     
     if (message.content.startsWith('!slap ')) {
         const user = message.mentions.users.first();
