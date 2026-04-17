@@ -706,6 +706,10 @@ if (message.content === '!unlock') {
         return message.reply('❌ Escribe algo.');
     }
 
+        function parseMessage(message) {
+    console.log(message.content);
+        }
+        
     const parts = full.split('|');
 
     const contentText = parts[0].trim();
