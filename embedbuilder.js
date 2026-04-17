@@ -1,79 +1,151 @@
-const { EmbedBuilder } = require('discord.js');
+const {
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    StringSelectMenuBuilder
+} = require('discord.js');
 
+// 🔁 Replacements
 function applyReplacements(text, message) {
-    const replacements = {
+    const map = {
         '{user}': message.author.username,
         '{user.tag}': message.author.tag,
         '{user.id}': message.author.id,
+        '{user.avatar}': message.author.displayAvatarURL(),
         '{server}': message.guild.name,
-        '{members}': message.guild.memberCount
+        '{server.icon}': message.guild.iconURL(),
+        '{members}': message.guild.memberCount,
+        '{channel}': message.channel.name
     };
 
-    for (const key in replacements) {
-        text = text.split(key).join(replacements[key]);
+    for (const key in map) {
+        text = text.split(key).join(map[key] ?? '');
     }
 
     return text;
 }
 
-function parseEmbed(text, message) {
-    if (!text) return null;
-
-    text = applyReplacements(text, message);
-
-    const embed = new EmbedBuilder();
-
-    // TITLE
-    const title = text.match(/{title:\s*([\s\S]*?)}/i);
-    if (title) embed.setTitle(title[1]);
-
-    // DESCRIPTION
-    const desc = text.match(/{desc:\s*([\s\S]*?)}/i);
-    if (desc) embed.setDescription(desc[1]);
-
-    // COLOR
-    const color = text.match(/{color:\s*([^}]+)}/i);
-    if (color) embed.setColor(color[1]);
-
-    // FOOTER
-    const footer = text.match(/{footer:\s*([\s\S]*?)}/i);
-    if (footer) embed.setFooter({ text: footer[1] });
-
-    // IMAGE
-    const image = text.match(/{image:\s*([^}]+)}/i);
-    if (image) embed.setImage(image[1]);
-
-    // THUMBNAIL
-    const thumbnail = text.match(/{thumbnail:\s*([^}]+)}/i);
-    if (thumbnail) embed.setThumbnail(thumbnail[1]);
-
-    // AUTHOR
-    const author = text.match(/{author:\s*([^|}]+)\s*\|\s*([^}]+)}/i);
-    if (author) {
-        embed.setAuthor({
-            name: author[1].trim(),
-            iconURL: author[2].trim()
-        });
-    }
-
-    // TIMESTAMP
-    if (text.includes('{timestamp}')) {
-        embed.setTimestamp();
-    }
-
-    // FIELDS (MULTIPLES)
-    const fieldRegex = /{field:\s*([^|}]+)\s*\|\s*([^|}]+)\s*\|\s*(true|false)}/gi;
-    let match;
-
-    while ((match = fieldRegex.exec(text)) !== null) {
-        embed.addFields({
-            name: match[1].trim(),
-            value: match[2].trim(),
-            inline: match[3].trim() === 'true'
-        });
-    }
-
-    return embed;
+// 🔹 Divide por múltiples embeds
+function splitEmbeds(text) {
+    return text.split('{newembed}');
 }
 
-module.exports = { parseEmbed };
+// 🔹 Extraer bloques
+function getBlocks(text, type) {
+    const regex = new RegExp(`\\{${type}:([\\s\\S]*?)\\}`, 'gi');
+    let match;
+    const results = [];
+
+    while ((match = regex.exec(text)) !== null) {
+        results.push(match[1].trim());
+    }
+
+    return results;
+}
+
+// 🔹 PARSE COMPLETO
+function parseMessage(text, message) {
+    text = applyReplacements(text, message);
+
+    const embedTexts = splitEmbeds(text);
+
+    const embeds = [];
+    const components = [];
+
+    for (const part of embedTexts) {
+        const embed = new EmbedBuilder();
+
+        const title = getBlocks(part, 'title')[0];
+        const desc = getBlocks(part, 'desc')[0];
+        const color = getBlocks(part, 'color')[0];
+        const footer = getBlocks(part, 'footer')[0];
+        const image = getBlocks(part, 'image')[0];
+        const thumb = getBlocks(part, 'thumbnail')[0];
+        const author = getBlocks(part, 'author')[0];
+
+        if (title) embed.setTitle(title);
+        if (desc) embed.setDescription(desc);
+
+        if (color) {
+            try { embed.setColor(color); } catch {}
+        }
+
+        if (footer) embed.setFooter({ text: footer });
+        if (image) embed.setImage(image);
+        if (thumb) embed.setThumbnail(thumb);
+
+        if (author) {
+            const parts = author.split('|');
+            embed.setAuthor({
+                name: parts[0]?.trim(),
+                iconURL: parts[1]?.trim()
+            });
+        }
+
+        if (part.includes('{timestamp}')) {
+            embed.setTimestamp();
+        }
+
+        // FIELDS
+        const fields = getBlocks(part, 'field');
+        for (const f of fields) {
+            const p = f.split('|');
+            if (p.length >= 2) {
+                embed.addFields({
+                    name: p[0].trim(),
+                    value: p[1].trim(),
+                    inline: p[2]?.trim() === 'true'
+                });
+            }
+        }
+
+        if (embed.data.title || embed.data.description || embed.data.fields?.length) {
+            embeds.push(embed);
+        }
+
+        // 🔘 BOTONES
+        const buttons = getBlocks(part, 'button');
+        if (buttons.length > 0) {
+            const row = new ActionRowBuilder();
+
+            for (const b of buttons) {
+                const p = b.split('|');
+
+                row.addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(p[1].trim())
+                        .setLabel(p[0].trim())
+                        .setStyle(ButtonStyle.Primary)
+                );
+            }
+
+            components.push(row);
+        }
+
+        // 📜 SELECT MENU
+        const menus = getBlocks(part, 'select');
+        if (menus.length > 0) {
+            const row = new ActionRowBuilder();
+
+            const menu = new StringSelectMenuBuilder()
+                .setCustomId('menu')
+                .setPlaceholder('Selecciona una opción');
+
+            for (const m of menus) {
+                const p = m.split('|');
+                menu.addOptions({
+                    label: p[0].trim(),
+                    value: p[1].trim()
+                });
+            }
+
+            row.addComponents(menu);
+            components.push(row);
+        }
+    }
+
+    return { embeds, components };
+}
+
+module.exports = { parseMessage };
