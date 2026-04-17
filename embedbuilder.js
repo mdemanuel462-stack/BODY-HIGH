@@ -1,12 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
 
-function parseEmbed(text, message) {
-    if (!text) return null;
-
-    // 🔁 Reemplazos tipo Mimu
+function applyReplacements(text, message) {
     const replacements = {
         '{user}': message.author.username,
         '{user.tag}': message.author.tag,
+        '{user.id}': message.author.id,
         '{server}': message.guild.name,
         '{members}': message.guild.memberCount
     };
@@ -15,31 +13,65 @@ function parseEmbed(text, message) {
         text = text.split(key).join(replacements[key]);
     }
 
+    return text;
+}
+
+function parseEmbed(text, message) {
+    if (!text) return null;
+
+    text = applyReplacements(text, message);
+
     const embed = new EmbedBuilder();
 
-    // 🧱 TITLE
+    // TITLE
     const title = text.match(/{title:\s*([^}]+)}/i);
     if (title) embed.setTitle(title[1]);
 
-    // 🧱 DESCRIPTION
+    // DESCRIPTION
     const desc = text.match(/{desc:\s*([^}]+)}/i);
     if (desc) embed.setDescription(desc[1]);
 
-    // 🎨 COLOR
+    // COLOR
     const color = text.match(/{color:\s*([^}]+)}/i);
     if (color) embed.setColor(color[1]);
 
-    // 🧾 FOOTER
+    // FOOTER
     const footer = text.match(/{footer:\s*([^}]+)}/i);
     if (footer) embed.setFooter({ text: footer[1] });
 
-    // 🖼️ IMAGE
+    // IMAGE
     const image = text.match(/{image:\s*([^}]+)}/i);
     if (image) embed.setImage(image[1]);
 
-    // 🖼️ THUMBNAIL
+    // THUMBNAIL
     const thumbnail = text.match(/{thumbnail:\s*([^}]+)}/i);
     if (thumbnail) embed.setThumbnail(thumbnail[1]);
+
+    // AUTHOR
+    const author = text.match(/{author:\s*([^|}]+)\s*\|\s*([^}]+)}/i);
+    if (author) {
+        embed.setAuthor({
+            name: author[1].trim(),
+            iconURL: author[2].trim()
+        });
+    }
+
+    // TIMESTAMP
+    if (text.includes('{timestamp}')) {
+        embed.setTimestamp();
+    }
+
+    // FIELDS (MULTIPLES)
+    const fieldRegex = /{field:\s*([^|}]+)\s*\|\s*([^|}]+)\s*\|\s*(true|false)}/gi;
+    let match;
+
+    while ((match = fieldRegex.exec(text)) !== null) {
+        embed.addFields({
+            name: match[1].trim(),
+            value: match[2].trim(),
+            inline: match[3].trim() === 'true'
+        });
+    }
 
     return embed;
 }
