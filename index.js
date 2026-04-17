@@ -17,7 +17,7 @@ const {
 
 const fs = require('fs');
 
-const { parseEmbed } = require('./embedbuilder');
+const { parseEmbed } = require('./embedBuilder');
 
 const client = new Client({
     intents: [
