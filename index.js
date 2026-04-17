@@ -650,16 +650,25 @@ if (message.content === '!unlock') {
 
     if (message.content.startsWith('!embed')) {
 
-    const args = message.content.slice(7).trim();
+    const full = message.content.slice(7).trim();
 
-    if (!args) {
-        return message.reply('❌ Escribe el embed.');
+    if (!full) {
+        return message.reply('❌ Escribe algo.');
     }
 
-    try {
-        const embed = parseEmbed(args, message);
+    // 🔹 Separar texto normal y embed
+    const parts = full.split('|');
 
-        message.channel.send({ embeds: [embed] });
+    const contentText = parts[0]?.trim(); // texto normal
+    const embedText = parts[1]?.trim();   // embed
+
+    try {
+        const embed = parseEmbed(embedText, message);
+
+        message.channel.send({
+            content: contentText || null,
+            embeds: embed ? [embed] : []
+        });
 
     } catch (err) {
         console.log(err);
