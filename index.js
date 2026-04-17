@@ -17,6 +17,47 @@ const {
 
 const fs = require('fs');
 
+function getData() {
+    return JSON.parse(fs.readFileSync('./embeds.json'));
+}
+
+function saveData(data) {
+    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+}
+
+function saveEmbed(guildId, name, content) {
+    const data = getData();
+
+    if (!data[guildId]) data[guildId] = {};
+
+    data[guildId][name] = content;
+
+    saveData(data);
+}
+
+function getEmbed(guildId, name) {
+    const data = getData();
+    return data[guildId]?.[name];
+}
+
+function deleteEmbed(guildId, name) {
+    const data = getData();
+
+    if (data[guildId] && data[guildId][name]) {
+        delete data[guildId][name];
+        saveData(data);
+        return true;
+    }
+
+    return false;
+}
+
+function saveEmbed(name, content) {
+    const data = JSON.parse(fs.readFileSync('./embeds.json'));
+    data[name] = content;
+    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+}
+
 const { parseEmbed } = require('./embedbuilder');
 
 const client = new Client({
@@ -679,7 +720,46 @@ if (message.content === '!unlock') {
         message.reply('❌ Error.');
     }
 }
+    if (message.content.startsWith('!saveembed')) {
 
+    const args = message.content.slice(10).trim();
+
+    const parts = args.split('|');
+
+    const name = parts[0]?.trim();
+    const content = parts.slice(1).join('|').trim();
+
+    if (!name || !content) {
+        return message.reply('❌ Usa: !saveembed nombre | embed');
+    }
+
+    saveEmbed(name, content);
+
+    message.reply(`✅ Embed guardado como "${name}"`);
+    }
+
+if (message.content.startsWith('!loadembed')) {
+
+    const name = message.content.split(' ')[1];
+
+    if (!name) return message.reply('❌ Escribe el nombre');
+
+    const data = JSON.parse(fs.readFileSync('./embeds.json'));
+
+    if (!data[name]) {
+        return message.reply('❌ No existe ese embed');
+    }
+
+    const { parseMessage } = require('./embedBuilder');
+
+    const { embeds, components } = parseMessage(data[name], message);
+
+    message.channel.send({
+        embeds,
+        components
+    });
+}
+    
     if (message.content.startsWith('!slap ')) {
         const user = message.mentions.users.first();
         if (!user) return message.reply('⚠️ Menciona a alguien.');
