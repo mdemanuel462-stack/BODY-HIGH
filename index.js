@@ -698,17 +698,14 @@ if (message.content === '!unlock') {
         message.channel.send(texto);
     }
 
-    if (message.content.startsWith('!embed')) {
+// ================= EMBED =================
+if (message.content.startsWith('!embed')) {
 
     const full = message.content.slice(7).trim();
 
     if (!full) {
         return message.reply('❌ Escribe algo.');
     }
-
-        function parseMessage(message) {
-    console.log(message.content);
-        }
         
     const parts = full.split('|');
 
@@ -716,27 +713,40 @@ if (message.content === '!unlock') {
     const embedText = parts.slice(1).join('|').trim();
 
     try {
-        const { embeds, components } = parseMessage(embedText, message);
+        const { embeds, components } = parseMessage(embedText);
 
         if (!embeds.length && !components.length) {
             return message.reply('❌ Mensaje vacío.');
         }
 
-        message.channel.send({
-            content: contentText,
+        await message.channel.send({
+            content: contentText || null,
             embeds,
             components
         });
 
     } catch (err) {
-        console.log(err);
-        message.reply('❌ Error.');
+        console.error(err);
+        message.reply('❌ Error al crear el embed.');
     }
 }
-    if (message.content.startsWith('!saveembed')) {
+
+// ================= FUNCIÓN =================
+function parseMessage(text) {
+    return {
+        embeds: [
+            {
+                description: text || '‎'
+            }
+        ],
+        components: []
+    };
+}
+
+// ================= GUARDAR EMBED =================
+if (message.content.startsWith('!saveembed')) {
 
     const args = message.content.slice(10).trim();
-
     const parts = args.split('|');
 
     const name = parts[0]?.trim();
@@ -746,31 +756,63 @@ if (message.content === '!unlock') {
         return message.reply('❌ Usa: !saveembed nombre | embed');
     }
 
-    saveEmbed(name, content);
+    let data = {};
 
-    message.reply(`✅ Embed guardado como "${name}"`);
+    // Leer archivo si existe
+    if (fs.existsSync('./embeds.json')) {
+        try {
+            data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
+        } catch {
+            data = {};
+        }
     }
 
+    data[name] = content;
+
+    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+
+    message.reply(`✅ Embed guardado como "${name}"`);
+}
+
+// ================= CARGAR EMBED =================
 if (message.content.startsWith('!loadembed')) {
 
     const name = message.content.split(' ')[1];
 
-    if (!name) return message.reply('❌ Escribe el nombre');
+    if (!name) {
+        return message.reply('❌ Escribe el nombre');
+    }
 
-    const data = JSON.parse(fs.readFileSync('./embeds.json'));
+    if (!fs.existsSync('./embeds.json')) {
+        return message.reply('❌ No hay embeds guardados');
+    }
+
+    let data;
+
+    try {
+        data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
+    } catch {
+        return message.reply('❌ Error leyendo embeds');
+    }
 
     if (!data[name]) {
         return message.reply('❌ No existe ese embed');
     }
 
-    const { parseMessage } = require('./embedBuilder');
+    try {
+        const { embeds, components } = parseMessage(data[name]);
 
-    const { embeds, components } = parseMessage(data[name], message);
+        await message.channel.send({
+            embeds,
+            components
+        });
 
-    message.channel.send({
-        embeds,
-        components
-    });
+    } } catch (err) {
+        console.error(err);
+        message.reply('❌ Error al cargar el embed.');
+    }
+          }
+    }
 }
     
     if (message.content.startsWith('!slap ')) {
