@@ -65,9 +65,14 @@ module.exports = {
     "https://cdn.discordapp.com/attachments/1493100509287153765/1493108213569294406/23F3BA8B-F152-4E9F-BD01-08E3C0B621CE.gif?ex=69dfbf22&is=69de6da2&hm=b1376db3f58c4271ec90175c62bef8f74d1a169036e15f4575e82481e9587720&",
     "https://cdn.discordapp.com/attachments/1493100509287153765/1493108254707023984/70CDB186-3260-49BD-B13B-6F28AAD5B726.gif?ex=69dfbf2c&is=69de6dac&hm=7fe65b519e10d16e738f93bfeb0763fa54eeb643a7e6cf1361e071fbc9235ca3&"
 ];
-        const textos = ["besa a", "le roba un beso a", "se acerca y besa a", "besa sin aviso a"];
 
-        const randomGif = kisses [Math.floor(Math.random() * kisses.length)];
+        const textos = [
+            "besa a",
+            "le da un beso a",
+            "se acerca y besa a"
+        ];
+
+        const randomGif = kisses[Math.floor(Math.random() * kisses.length)];
         const textoRandom = textos[Math.floor(Math.random() * textos.length)];
 
         const name1 = message.member?.displayName || message.author.username;
@@ -79,10 +84,14 @@ module.exports = {
             .setTitle('Un beso en Body High')
             .setDescription(
 `${message.author} ${textoRandom} ${user}
+
 *${name1} y ${name2} se han besado ${kissCount[key]} veces.*`
             )
             .setImage(randomGif)
-            .setFooter({ text: 'Todos observan...' });
+            .setFooter({ text: 'Todos observan...' })
+            .setTimestamp();
 
-        return message.channel.send({ embeds: [embed] });
+        message.channel.send({ embeds: [embed] });
+
     }
+};
