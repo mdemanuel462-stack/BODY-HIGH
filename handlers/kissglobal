@@ -9,7 +9,7 @@ module.exports = {
             .setColor('#EC1D1D')
             .setTitle('Besos Globales')
             .setDescription(`Total de besos registrados: **${globalKisses}**`)
-            .setFooter({ text: 'Derry observa cada beso...' })
+            .setFooter({ text: 'Body High observa cada beso...' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
