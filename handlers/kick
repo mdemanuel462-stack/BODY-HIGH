@@ -1,1 +1,25 @@
+if (message.content.startsWith('!kick ')) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
+            return message.reply('❌ No tienes permisos.');
+        }
 
+        const user = message.mentions.members.first();
+
+        if (!user) return message.reply('⚠️ Menciona un usuario.');
+        if (!user.kickable) return message.reply('❌ No puedo expulsarlo.');
+
+        await user.kick();
+        await sendLog(message.guild, {
+    embeds: [
+        new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle('📜 Log de Moderación')
+            .setDescription(`👢 ${user.user.tag} fue expulsado`)
+            .addFields(
+                { name: 'Moderador', value: message.author.tag }
+            )
+            .setTimestamp()
+    ]
+});
+}
+       
