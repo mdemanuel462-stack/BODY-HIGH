@@ -1,1 +1,11 @@
+if (message.content === '!serverinfo') {
+        const embed = new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle(`🌍 ${message.guild.name}`)
+            .addFields(
+                { name: 'Miembros', value: `${message.guild.memberCount}` },
+                { name: 'ID', value: message.guild.id }
+            );
 
+        message.channel.send({ embeds: [embed] });
+    }
