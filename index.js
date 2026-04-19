@@ -931,8 +931,6 @@ if (message.content.startsWith('!setlogs')) {
     message.channel.send(`📜 Canal de logs configurado: ${channel}`);
 }
 
-return;
-
 // ==========================
 // SET CONFESIONES
 // ==========================
@@ -950,8 +948,6 @@ if (message.content.startsWith('!setconfesiones')) {
 fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
     message.reply(`Canal de confesiones configurado en ${canal}`);
 }
-
-return;
 
     // =======================
     // 🔢 CMD-CONFESAR
