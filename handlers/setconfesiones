@@ -1,1 +1,44 @@
+if (message.content.startsWith('!confesar ')) {
 
+    const texto = message.content.slice(10).trim();
+
+    if (!texto) return message.reply('Escribe tu confesión.');
+
+    if (confesiones.find(c => c.texto === texto)) {
+        return message.reply('⚠️ Esa confesión ya fue enviada.');
+    }
+
+    lastConfesionId++;
+    const id = lastConfesionId;
+
+    confesiones.push({ id, texto, userId: message.author.id });
+
+    save();
+
+    const serverConfig = config[message.guild.id];
+
+    if (!serverConfig?.logs || !serverConfig?.confesiones) {
+        return message.reply('⚠️ Configura primero con !setlogs y !setconfesiones');
+    }
+
+    const logChannel = client.channels.cache.get(serverConfig.logs);
+    if (!logChannel) return message.reply('❌ Canal inválido.');
+
+    const embed = new EmbedBuilder()
+        .setColor('#EC1D1D')
+        .setTitle(`Confesión pendiente (#${id})`)
+        .setDescription(`"${texto}"`)
+        .addFields(
+            { name: 'Usuario', value: message.author.tag },
+            { name: 'Estado', value: 'En espera' }
+        );
+
+    const botones = new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setCustomId(`approve_${id}`).setLabel('Aprobar').setStyle(ButtonStyle.Success),
+        new ButtonBuilder().setCustomId(`deny_${id}`).setLabel('Denegar').setStyle(ButtonStyle.Danger)
+    );
+
+    await logChannel.send({ embeds: [embed], components: [botones] });
+
+    message.delete().catch(() => {});
+}
