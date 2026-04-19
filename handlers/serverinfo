@@ -1,11 +1,22 @@
-if (message.content === '!serverinfo') {
+
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'serverinfo',
+
+    async execute(message) {
+
         const embed = new EmbedBuilder()
             .setColor('#EC1D1D')
-            .setTitle(`🌍 ${message.guild.name}`)
+            .setTitle(`${message.guild.name}`)
             .addFields(
-                { name: 'Miembros', value: `${message.guild.memberCount}` },
-                { name: 'ID', value: message.guild.id }
-            );
+                { name: ' Miembros', value: `${message.guild.memberCount}`, inline: true },
+                { name: 'ID', value: message.guild.id, inline: true }
+            )
+            .setFooter({ text: '' })
+            .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
+
     }
+};
