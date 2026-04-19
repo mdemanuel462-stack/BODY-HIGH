@@ -1,26 +1,30 @@
 if (interaction.isButton()) {
     if (!interaction.guild) return;
 
-await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
+
+    const error = (texto) => {
+        return interaction.followUp({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor('#EC1D1D')
+                    .setDescription(`❌ ${texto}`)
+            ],
+            ephemeral: true
+        });
+    };
+
     try {
 
-
-        // 🔒 PERMISOS
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return interaction.followUp({
-                content: '❌ Necesitas permisos de moderador para usar esto.',
-                ephemeral: true
-            });
+            return error('Necesitas permisos de moderador para usar esto.');
         }
 
         const [action, id] = interaction.customId.split('_');
         const conf = confesiones.find(c => c.id == id);
 
         if (!conf) {
-            return interaction.followUp({
-                content: '❌ Confesión no encontrada.',
-                ephemeral: true
-            });
+            return error('Confesión no encontrada.');
         }
 
         const serverConfig = config[interaction.guild.id];
@@ -29,34 +33,38 @@ await interaction.deferReply({ ephemeral: true });
         const canal = client.channels.cache.get(serverConfig.confesiones);
         if (!canal) return;
 
-        // ✅ APPROVE
         if (action === 'approve') {
-            const embed = new EmbedBuilder()
+
+            const embedConf = new EmbedBuilder()
                 .setColor('#EC1D1D')
-                .setTitle(`🎈 Confesión (#${id})`)
+                .setTitle(`Confesión (#${id})`)
                 .setDescription(`"${conf.texto}"`)
                 .setFooter({ text: 'Derry...' });
 
-            await canal.send({ embeds: [embed] });
+            await canal.send({ embeds: [embedConf] });
 
             await interaction.followUp({
-                content: `✅ Confesión #${id} aprobada`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(`✅ Confesión **#${id}** aprobada`)
+                ],
                 ephemeral: true
             });
 
-await sendLog(interaction.guild, {
-    embeds: [
-        new EmbedBuilder()
-            .setColor('#00FF7F')
-            .setTitle('📜 Confesión aprobada')
-            .addFields(
-                { name: 'ID', value: `#${id}`, inline: true },
-                { name: 'Moderador', value: interaction.user.tag, inline: true },
-                { name: 'Canal', value: `<#${canal.id}>`, inline: true }
-            )
-            .setTimestamp()
-    ]
-});
+            await sendLog(interaction.guild, {
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#00FF7F')
+                        .setTitle('📜 Confesión aprobada')
+                        .addFields(
+                            { name: 'ID', value: `#${id}`, inline: true },
+                            { name: 'Moderador', value: interaction.user.tag, inline: true },
+                            { name: 'Canal', value: `<#${canal.id}>`, inline: true }
+                        )
+                        .setTimestamp()
+                ]
+            });
 
             confesiones = confesiones.filter(c => c.id != id);
             save();
@@ -66,26 +74,30 @@ await sendLog(interaction.guild, {
             } catch {}
         }
 
-        // ❌ DENY 
         if (action === 'deny') {
+
             await interaction.followUp({
-                content: `❌ Confesión #${id} rechazada`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(`❌ Confesión **#${id}** rechazada`)
+                ],
                 ephemeral: true
             });
 
-await sendLog(interaction.guild, {
-    embeds: [
-        new EmbedBuilder()
-            .setColor('#EC1D1D')
-            .setTitle('📜 Confesión rechazada')
-            .addFields(
-                { name: 'ID', value: `#${id}`, inline: true },
-                { name: 'Moderador', value: interaction.user.tag, inline: true },
-                { name: 'Canal', value: `<#${canal.id}>`, inline: true }
-            )
-            .setTimestamp()
-    ]
-});
+            await sendLog(interaction.guild, {
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setTitle('📜 Confesión rechazada')
+                        .addFields(
+                            { name: 'ID', value: `#${id}`, inline: true },
+                            { name: 'Moderador', value: interaction.user.tag, inline: true },
+                            { name: 'Canal', value: `<#${canal.id}>`, inline: true }
+                        )
+                        .setTimestamp()
+                ]
+            });
 
             confesiones = confesiones.filter(c => c.id != id);
             save();
@@ -97,12 +109,14 @@ await sendLog(interaction.guild, {
 
     } catch (err) {
         console.error('❌ Error en botones:', err);
+
+        interaction.followUp({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor('#EC1D1D')
+                    .setDescription('❌ Ocurrió un error inesperado...')
+            ],
+            ephemeral: true
+        });
     }
 }
-
-
-
-
-
-
-
