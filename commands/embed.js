@@ -1,4 +1,4 @@
-const { parseMessage } = require('../systems/embedBuilder');
+const { parseMessage } = require('../systems/embedbuilder');
 
 module.exports = {
     name: 'embed',
