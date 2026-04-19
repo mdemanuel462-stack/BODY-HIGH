@@ -1,4 +1,3 @@
-
 const { PermissionsBitField, EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -29,8 +28,8 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor('#EC1D1D')
             .setTitle('🧹 Advertencias limpiadas')
-            .setDescription(`Las advertencias de **${user.tag}** han sido eliminadas`)
-            .setFooter({ text: 'Derry observa...' })
+            .setDescription(`Las advertencias de **${user.tag}** fueron eliminadas`)
+            .setFooter({ text: 'Derry perdona... por ahora' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
