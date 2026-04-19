@@ -1,1 +1,13 @@
 
+if (message.content === '!lock') {
+    if (!message.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+        return message.reply('❌ No tienes permisos.');
+    }
+
+    await message.channel.permissionOverwrites.edit(message.guild.roles.everyone, {
+        SendMessages: false
+    });
+
+    message.channel.send('🔒 Canal bloqueado.');
+}
+
