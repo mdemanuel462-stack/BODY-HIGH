@@ -1,5 +1,5 @@
 const { PermissionsBitField, EmbedBuilder } = require('discord.js');
-const stickSystem = require('../handlers/stick'); // 👈 cambia si renombraste el archivo
+const stickSystem = require('../handlers/stick'); 
 
 module.exports = {
     name: 'stick',
