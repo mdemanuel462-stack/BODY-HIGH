@@ -1,4 +1,13 @@
 const fs = require('fs');
+const { Client, GatewayIntentBits } = require('discord.js');
+
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
 client.commands = new Map();
 
@@ -9,7 +18,7 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-const stickHandler = require('./handlers/stick'); // o sticky si no cambiaste
+const stickHandler = require('./handlers/sticky'); // o stick
 const interactionHandler = require('./handlers/interaction');
 
 client.on('messageCreate', async (message) => {
@@ -26,7 +35,9 @@ client.on('messageCreate', async (message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const cmd = args.shift().toLowerCase();
 
-    const command = client.commands.get(cmd);
+    const command =
+        client.commands.get(cmd) ||
+        [...client.commands.values()].find(c => c.aliases?.includes(cmd));
 
     if (!command) return;
 
@@ -40,3 +51,5 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async (interaction) => {
     interactionHandler(interaction, client);
 });
+
+client.login(process.env.TOKEN);
