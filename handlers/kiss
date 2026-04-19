@@ -1,9 +1,29 @@
-if (message.content.toLowerCase().startsWith('!kiss')) {
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'kiss',
+
+    async execute(message, args) {
+
+        const error = (txt) => {
+            return message.channel.send({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(`❌ ${txt}`)
+                ]
+            });
+        };
+
         const user = message.mentions.users.first();
 
-        if (!user) return message.reply('🎈 Menciona a alguien para besar...');
-        if (user.id === message.author.id) 
-        return message.reply('🎈 No puedes besarte a ti mismo... o sí?');
+        if (!user) {
+            return error('Menciona a alguien para besar...');
+        }
+
+        if (user.id === message.author.id) {
+            return error('No puedes besarte a ti mismo... o sí?');
+        }
 
         const key = [message.author.id, user.id].sort().join('-');
 
@@ -12,7 +32,7 @@ if (message.content.toLowerCase().startsWith('!kiss')) {
         kissCount[key]++;
         globalKisses++;
 
-save();
+        save();
 
         const kisses = [
     "https://cdn.discordapp.com/attachments/1488378753418526841/1488384152771366922/B5B17D45-D79B-4EB7-8905-BC7154AACC29.gif",
