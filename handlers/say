@@ -1,1 +1,7 @@
+if (message.content.startsWith('!say ')) {
+        const texto = message.content.slice(5);
+        message.delete().catch(() => {});
+        message.channel.send(texto);
+    }
+
 
