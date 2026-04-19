@@ -1,1 +1,30 @@
+if (message.content.startsWith('!hb ')) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
+            return message.reply('❌ No tienes permisos.');
+        }
 
+        const args = message.content.split(' ');
+        const user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
+        const reason = args.slice(2).join(' ') || 'Sin razón';
+
+        if (!user) {
+            return message.reply('⚠️ Debes mencionar a un usuario o poner su ID.');
+        }
+
+        if (!user.bannable) {
+            return message.reply('❌ No puedo banear a ese usuario.');
+        }
+if (user.id === message.author.id) {
+    return message.reply('❌ No puedes banearte a ti mismo.');
+}
+
+if (user.id === message.guild.ownerId) {
+    return message.reply('❌ No puedes banear al dueño del servidor.');
+}
+
+if (user.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    return message.reply('❌ No puedes banear a un administrador.');
+}
+        await user.ban({ deleteMessageSeconds: 604800, reason });
+        message.channel.send(`☠️ ${user.user.tag} fue eliminado completamente.\n📝 Razón: ${reason}`);
+    }
