@@ -1,4 +1,6 @@
 require('dotenv').config();
+process.on('unhandledRejection', console.error);
+process.on('uncaughtException', console.error);
 if (!process.env.TOKEN) {
     console.log('❌ TOKEN no detectado en .env');
     process.exit(1);
@@ -104,6 +106,12 @@ async function sendLog(guild, data) {
         console.error('❌ Error guardando confesiones:', err);
     }
 
+        try {
+    fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+} catch (err) {
+    console.error('❌ Error guardando config:', err);
+        }require('dotenv').config();
+        
     try {
         fs.writeFileSync('./warns.json', JSON.stringify(warns, null, 2));
     } catch (err) {
