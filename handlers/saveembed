@@ -1,29 +1,53 @@
-if (message.content.startsWith('!saveembed')) {
-    const args = message.content.slice(10).trim();
-    const parts = args.split('|');
+const { EmbedBuilder } = require('discord.js');
+const fs = require('fs');
 
-    const name = parts[0]?.trim();
-    const content = parts.slice(1).join('|').trim();
+module.exports = {
+    name: 'saveembed',
 
-    if (!name || !content) {
-        return message.reply('❌ Usa: !saveembed nombre | embed');
-    }
+    async execute(message, args) {
 
-    let data = {};
+        const error = (txt) => {
+            return message.channel.send({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(`❌ ${txt}`)
+                ]
+            });
+        };
 
-    // Leer archivo si existe
-    if (fs.existsSync('./embeds.json')) {
-        try {
-            data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
-        } catch (err) {
-            data = {};
+        const raw = args.join(' ').trim();
+        const parts = raw.split('|');
+
+        const name = parts[0]?.trim();
+        const content = parts.slice(1).join('|').trim();
+
+        if (!name || !content) {
+            return error('Usa: !saveembed nombre | embed');
         }
+
+        let data = {};
+
+        if (fs.existsSync('./embeds.json')) {
+            try {
+                data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
+            } catch {
+                data = {};
+            }
+        }
+
+        data[name] = content;
+
+        fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+
+        const embed = new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle('💾 Embed guardado')
+            .setDescription(`Guardado como **${name}**`)
+            .setFooter({ text: 'Derry recuerda tus creaciones...' })
+            .setTimestamp();
+
+        message.channel.send({ embeds: [embed] });
+
     }
-
-    data[name] = content;
-
-    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
-
-    message.reply(`✅ Embed guardado como "${name}"`);
-}
-
+};
