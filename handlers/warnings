@@ -1,1 +1,21 @@
+const { EmbedBuilder } = require('discord.js');
 
+module.exports = {
+    name: 'warnings',
+
+    async execute(message, args) {
+
+        const user = message.mentions.users.first() || message.author;
+        const count = warns[user.id]?.length || 0;
+
+        const embed = new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle('📊 Advertencias')
+            .setDescription(`**${user.tag}** tiene **${count} advertencias**`)
+            .setFooter({ text: 'Derry recuerda todo...' })
+            .setTimestamp();
+
+        message.channel.send({ embeds: [embed] });
+
+    }
+};
