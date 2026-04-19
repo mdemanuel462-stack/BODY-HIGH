@@ -1,50 +1,63 @@
-const { PermissionsBitField, EmbedBuilder } = require('discord.js');
-const stickSystem = require('../handlers/stick'); 
+const fs = require('fs');
 
-module.exports = {
-    name: 'stick',
+let sticky = {};
+let lock = {};
 
-    async execute(message, args) {
+if (fs.existsSync('./sticky.json')) {
+    sticky = JSON.parse(fs.readFileSync('./sticky.json'));
+}
 
-        const error = (txt) => {
-            return message.channel.send({
-                embeds: [
-                    new EmbedBuilder()
-                        .setColor('#EC1D1D')
-                        .setDescription(`❌ ${txt}`)
-                ]
-            });
-        };
+function save() {
+    fs.writeFileSync('./sticky.json', JSON.stringify(sticky, null, 2));
+}
 
-        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return error('No tienes permisos.');
+module.exports = async (message) => {
+
+    if (!message.guild) return;
+    if (message.author.bot) return;
+
+    const guildId = message.guild.id;
+    const channelId = message.channel.id;
+
+    const stickies = sticky[guildId]?.[channelId];
+    if (!stickies) return;
+
+    if (message.content.startsWith('!')) return;
+
+    if (stickies.some(s => s.lastId === message.id)) return;
+
+    const key = guildId + channelId;
+
+    if (lock[key]) return;
+    lock[key] = true;
+
+    try {
+
+        for (const data of stickies) {
+
+            if (data.lastId) {
+                await message.channel.messages.delete(data.lastId).catch(() => {});
+            }
+
+            await new Promise(res => setTimeout(res, 120));
+
+            const msg = await message.channel.send(data.text);
+
+            data.lastId = msg.id;
+            data.uses++;
         }
 
-        const text = args.join(' ').trim();
-        if (!text) return error('Escribe un mensaje.');
+        save();
 
-        const stick = stickSystem.data;
-
-        const g = message.guild.id;
-        const c = message.channel.id;
-
-        if (!stick[g]) stick[g] = {};
-        if (!stick[g][c]) stick[g][c] = [];
-
-        stick[g][c].push({
-            text,
-            lastId: null,
-            uses: 0
-        });
-
-        stickSystem.save();
-
-        message.channel.send({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('#EC1D1D')
-                    .setDescription('🧷 Stick activado')
-            ]
-        });
+    } catch (err) {
+        console.log('Sticky error:', err);
     }
+
+    setTimeout(() => {
+        lock[key] = false;
+    }, 1200);
 };
+
+// exportamos para usar en comandos
+module.exports.data = sticky;
+module.exports.save = save;
