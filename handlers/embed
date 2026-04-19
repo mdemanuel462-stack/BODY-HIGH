@@ -1,46 +1,61 @@
-if (message.content.startsWith('!embed')) {
-    const full = message.content.slice(7).trim();
+const { EmbedBuilder } = require('discord.js');
 
-    if (!full) {
-        return message.reply('❌ Escribe algo.');
-    }
-        
-    const parts = full.split('|');
-    const contentText = parts[0].trim();
-    const embedText = parts.slice(1).join('|').trim();
+module.exports = {
+    name: 'embed',
 
-    console.log('CONTENT:', contentText);
-    console.log('EMBED:', embedText);
-    
-    try {
-        const parsed = parseMessage(embedText) || { embeds: [], components: [] };
-        const embeds = parsed.embeds || [];
-        const components = parsed.components || [];
+    async execute(message, args) {
 
-        if (!embeds.length && !components.length) {
-            return message.reply('❌ Mensaje vacío.');
+        const error = (txt) => {
+            return message.channel.send({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(`❌ ${txt}`)
+                ]
+            });
+        };
+
+        const full = args.join(' ').trim();
+
+        if (!full) {
+            return error('Escribe algo.');
         }
 
-        await message.channel.send({
-            content: contentText || null,
-            embeds,
-            components
-        });
+        const parts = full.split('|');
+        const contentText = parts[0]?.trim();
+        const embedText = parts.slice(1).join('|').trim();
 
-    } catch (err) {
-        console.error(err);
-        message.reply('❌ Error al crear el embed.');
+        try {
+            const parsed = parseMessage(embedText);
+
+            const embeds = parsed.embeds || [];
+            const components = parsed.components || [];
+
+            if (!embeds.length && !components.length) {
+                return error('Mensaje vacío.');
+            }
+
+            await message.channel.send({
+                content: contentText || null,
+                embeds,
+                components
+            });
+
+        } catch (err) {
+            console.error(err);
+            return error('Error al crear el embed.');
+        }
+
     }
-}
-
+};
 
 function parseMessage(text) {
     try {
         return {
             embeds: [
-                {
-                    description: text?.trim() || '‎'
-                }
+                new EmbedBuilder()
+                    .setColor('#EC1D1D')
+                    .setDescription(text?.trim() || '‎')
             ],
             components: []
         };
