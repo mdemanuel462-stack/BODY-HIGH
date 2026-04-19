@@ -24,7 +24,7 @@ module.exports = {
             .setTitle('⚙️ Panel de Configuración')
             .setDescription('Bienvenido a Body High...\nSelecciona una opción abajo.')
             .setThumbnail('https://i.imgur.com/8Km9tLL.png')
-            .setFooter({ text: 'Derry te observa...' })
+            .setFooter({ text: '' })
             .setTimestamp();
 
         const menu = new StringSelectMenuBuilder()
