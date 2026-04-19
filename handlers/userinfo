@@ -1,1 +1,15 @@
+if (message.content.startsWith('!userinfo')) {
+        const user = message.mentions.users.first() || message.author;
 
+        const embed = new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle(`👤 Info de ${user.tag}`)
+            .addFields(
+                { name: 'ID', value: user.id },
+                { name: 'Cuenta creada', value: `<t:${parseInt(user.createdTimestamp / 1000)}:R>` }
+            );
+
+        message.channel.send({ embeds: [embed] });
+    }
+
+  
