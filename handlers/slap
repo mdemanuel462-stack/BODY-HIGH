@@ -1,1 +1,6 @@
-
+if (message.content.startsWith('!slap ')) {
+        const user = message.mentions.users.first();
+        if (!user) return message.reply('⚠️ Menciona a alguien.');
+if (user.bot) {
+    return message.reply('❌ No puedes advertir bots.');
+}
