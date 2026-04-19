@@ -44,7 +44,7 @@ module.exports = {
             .setColor('#EC1D1D')
             .setTitle('💾 Embed guardado')
             .setDescription(`Guardado como **${name}**`)
-            .setFooter({ text: 'Derry recuerda tus creaciones...' })
+            .setFooter({ text: '' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
