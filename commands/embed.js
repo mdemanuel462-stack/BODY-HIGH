@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { parseMessage } = require('../systems/embedBuilder');
 
 module.exports = {
     name: 'embed',
@@ -8,7 +8,7 @@ module.exports = {
         const error = (txt) => {
             return message.channel.send({
                 embeds: [
-                    new EmbedBuilder()
+                    new (require('discord.js').EmbedBuilder)()
                         .setColor('#EC1D1D')
                         .setDescription(`❌ ${txt}`)
                 ]
@@ -17,28 +17,22 @@ module.exports = {
 
         const full = args.join(' ').trim();
 
-        if (!full) {
-            return error('Escribe algo.');
-        }
+        if (!full) return error('Escribe algo.');
 
         const parts = full.split('|');
+
         const contentText = parts[0]?.trim();
-        const embedText = parts.slice(1).join('|').trim();
+        const embedData = parts.slice(1).join('|').trim();
 
         try {
-            const parsed = parseMessage(embedText);
 
-            const embeds = parsed.embeds || [];
-            const components = parsed.components || [];
-
-            if (!embeds.length && !components.length) {
-                return error('Mensaje vacío.');
-            }
+            const embed = parseMessage({
+                description: embedData || '‎'
+            });
 
             await message.channel.send({
                 content: contentText || null,
-                embeds,
-                components
+                embeds: [embed]
             });
 
         } catch (err) {
@@ -48,22 +42,3 @@ module.exports = {
 
     }
 };
-
-function parseMessage(text) {
-    try {
-        return {
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('#EC1D1D')
-                    .setDescription(text?.trim() || '‎')
-            ],
-            components: []
-        };
-    } catch (err) {
-        console.error('Error en parseMessage:', err);
-        return {
-            embeds: [],
-            components: []
-        };
-    }
-}
