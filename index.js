@@ -408,7 +408,7 @@ if (message.content === '!config') {
         const user = message.mentions.users.first();
         if (!user) return message.reply('❌ Menciona un usuario.');
 
-        warns[user.id] = 0;
+        warns[user.id] = [];
         save();
 
         message.channel.send(`🧹 Advertencias limpiadas para ${user.tag}`);
@@ -755,7 +755,7 @@ function parseMessage(text) {
 }
 
 // ================= GUARDAR EMBED =================
-if (message.content.startsWith('!saveembed')) {
+    if (message.content.startsWith('!saveembed')) {
     const args = message.content.slice(10).trim();
     const parts = args.split('|');
 
@@ -766,24 +766,10 @@ if (message.content.startsWith('!saveembed')) {
         return message.reply('❌ Usa: !saveembed nombre | embed');
     }
 
-    let data = {};
-
-    // Leer archivo si existe
-    if (fs.existsSync('./embeds.json')) {
-        try {
-            data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
-        } catch (err) {
-            data = {};
-        }
-    }
-
-    data[name] = content;
-
-    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+    saveEmbed(message.guild.id, name, content);
 
     message.reply(`✅ Embed guardado como "${name}"`);
 }
-
 // ================= CARGAR EMBED =================
 if (message.content.startsWith('!loadembed')) {
     const name = message.content.split(' ')[1];
@@ -792,34 +778,16 @@ if (message.content.startsWith('!loadembed')) {
         return message.reply('❌ Escribe el nombre');
     }
 
-    if (!fs.existsSync('./embeds.json')) {
-        return message.reply('❌ No hay embeds guardados');
-    }
+    const data = getEmbed(message.guild.id, name);
 
-    let data;
-
-    try {
-        data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
-    } catch (err) {
-        return message.reply('❌ Error leyendo embeds');
-    }
-
-    if (!data[name]) {
+    if (!data) {
         return message.reply('❌ No existe ese embed');
     }
 
-    try {
-        const { embeds, components } = parseMessage(data[name]);
+    const { embeds, components } = parseMessage(data);
 
-        await message.channel.send({
-            embeds,
-            components
-        });
-
-    } catch (err) {
-        console.error(err);
-        message.reply('❌ Error al cargar el embed.');
-    }
+    message.channel.send({ embeds, components });
+}
     
     
     if (message.content.startsWith('!slap ')) {
