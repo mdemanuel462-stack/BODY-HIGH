@@ -1,1 +1,3 @@
-
+if (message.content.toLowerCase() === '!kissglobal') {
+        return message.reply(`🌎 Total de besos globales: **${globalKisses}**`);
+    }
