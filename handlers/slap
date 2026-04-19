@@ -4,3 +4,6 @@ if (message.content.startsWith('!slap ')) {
 if (user.bot) {
     return message.reply('❌ No puedes advertir bots.');
 }
+
+        message.channel.send(`👋 ${message.author} le dio una bofetada a ${user}`);
+    }
