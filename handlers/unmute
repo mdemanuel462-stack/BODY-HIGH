@@ -33,8 +33,8 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor('#EC1D1D')
-            .setTitle('🔊 Usuario desmuteado')
-            .setDescription(`**${user.user.tag}** puede hablar nuevamente 🎈`)
+            .setTitle('Usuario desmuteado')
+            .setDescription(`**${user.user.tag}** puede hablar nuevamente`)
             .addFields(
                 { name: '👮 Moderador', value: message.author.tag }
             )
