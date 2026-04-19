@@ -1,0 +1,108 @@
+if (interaction.isButton()) {
+    if (!interaction.guild) return;
+
+await interaction.deferReply({ ephemeral: true });
+    try {
+
+
+        // 🔒 PERMISOS
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            return interaction.followUp({
+                content: '❌ Necesitas permisos de moderador para usar esto.',
+                ephemeral: true
+            });
+        }
+
+        const [action, id] = interaction.customId.split('_');
+        const conf = confesiones.find(c => c.id == id);
+
+        if (!conf) {
+            return interaction.followUp({
+                content: '❌ Confesión no encontrada.',
+                ephemeral: true
+            });
+        }
+
+        const serverConfig = config[interaction.guild.id];
+        if (!serverConfig?.confesiones) return;
+
+        const canal = client.channels.cache.get(serverConfig.confesiones);
+        if (!canal) return;
+
+        // ✅ APPROVE
+        if (action === 'approve') {
+            const embed = new EmbedBuilder()
+                .setColor('#EC1D1D')
+                .setTitle(`🎈 Confesión (#${id})`)
+                .setDescription(`"${conf.texto}"`)
+                .setFooter({ text: 'Derry...' });
+
+            await canal.send({ embeds: [embed] });
+
+            await interaction.followUp({
+                content: `✅ Confesión #${id} aprobada`,
+                ephemeral: true
+            });
+
+await sendLog(interaction.guild, {
+    embeds: [
+        new EmbedBuilder()
+            .setColor('#00FF7F')
+            .setTitle('📜 Confesión aprobada')
+            .addFields(
+                { name: 'ID', value: `#${id}`, inline: true },
+                { name: 'Moderador', value: interaction.user.tag, inline: true },
+                { name: 'Canal', value: `<#${canal.id}>`, inline: true }
+            )
+            .setTimestamp()
+    ]
+});
+
+            confesiones = confesiones.filter(c => c.id != id);
+            save();
+
+            try {
+                await interaction.message.edit({ components: [] });
+            } catch {}
+        }
+
+        // ❌ DENY 
+        if (action === 'deny') {
+            await interaction.followUp({
+                content: `❌ Confesión #${id} rechazada`,
+                ephemeral: true
+            });
+
+await sendLog(interaction.guild, {
+    embeds: [
+        new EmbedBuilder()
+            .setColor('#EC1D1D')
+            .setTitle('📜 Confesión rechazada')
+            .addFields(
+                { name: 'ID', value: `#${id}`, inline: true },
+                { name: 'Moderador', value: interaction.user.tag, inline: true },
+                { name: 'Canal', value: `<#${canal.id}>`, inline: true }
+            )
+            .setTimestamp()
+    ]
+});
+
+            confesiones = confesiones.filter(c => c.id != id);
+            save();
+
+            try {
+                await interaction.message.edit({ components: [] });
+            } catch {}
+        }
+
+    } catch (err) {
+        console.error('❌ Error en botones:', err);
+    }
+}
+
+
+
+
+
+
+
