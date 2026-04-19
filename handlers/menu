@@ -1,52 +1,30 @@
- if (interaction.isStringSelectMenu()) {
+if (interaction.isStringSelectMenu()) {
 
-        if (interaction.customId === 'config_menu') {
+    if (interaction.customId === 'config_menu') {
 
-            const value = interaction.values[0];
+        const value = interaction.values[0];
 
-            if (value === 'confesiones') {
-                return interaction.reply({
-                    content: '💬 Usa: !setconfesiones #canal',
-                    ephemeral: true
-                });
-            }
+        const reply = (txt) => {
+            return interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('#EC1D1D')
+                        .setDescription(txt)
+                ],
+                ephemeral: true
+            });
+        };
 
-            if (value === 'logs') {
-                return interaction.reply({
-                    content: '📜 Usa: !setlogs #canal',
-                    ephemeral: true
-                });
+        if (value === 'confesiones') {
+            return reply('💬 Usa: **!setconfesiones #canal**');
+        }
+
+        if (value === 'logs') {
+            return reply('📜 Usa: **!setlogs #canal**');
+        }
+
+        if (value === 'mod') {
+            return reply('⚠️ Sistema en desarrollo...');
+        }
+    }
 }
-
-            if (value === 'mod') {
-                return interaction.reply({
-                    content: '⚠️ Sistema en desarrollo...',
-                    ephemeral: true
-                });
-            }
-        }
-    }
-
-    
-    
-    if (message.content.startsWith('!warnings')) {
-        const user = message.mentions.users.first() || message.author;
-        const count = warns[user.id]?.length || 0;
-
-
-        message.channel.send(`📊 ${user.tag} tiene ${count} advertencias.`);
-    }
-
-    if (message.content.startsWith('!clearwarns')) {
-        if (!message.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
-            return message.reply('❌ No tienes permisos.');
-        }
-
-        const user = message.mentions.users.first();
-        if (!user) return message.reply('❌ Menciona un usuario.');
-
-        warns[user.id] = 0;
-        save();
-
-        message.channel.send(`🧹 Advertencias limpiadas para ${user.tag}`);
-    }
