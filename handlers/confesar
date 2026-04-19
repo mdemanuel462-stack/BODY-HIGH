@@ -1,1 +1,16 @@
+if (message.content.startsWith('!setconfesiones')) {
+    if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+        return message.reply('❌ No tienes permisos.');
+    }
+
+    const canal = message.mentions.channels.first();
+    if (!canal) return message.reply('⚠️ Menciona un canal.');
+
+    if (!config[message.guild.id]) config[message.guild.id] = {};
+
+    config[message.guild.id].confesiones = canal.id;
+fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+    message.reply(`Canal de confesiones configurado en ${canal}`);
+}
+
 
