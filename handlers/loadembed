@@ -1,1 +1,38 @@
+if (message.content.startsWith('!loadembed')) {
+    const name = message.content.split(' ')[1];
 
+    if (!name) {
+        return message.reply('❌ Escribe el nombre');
+    }
+
+    if (!fs.existsSync('./embeds.json')) {
+        return message.reply('❌ No hay embeds guardados');
+    }
+
+    let data;
+
+    try {
+        data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
+    } catch (err) {
+        return message.reply('❌ Error leyendo embeds');
+    }
+
+    if (!data[name]) {
+        return message.reply('❌ No existe ese embed');
+    }
+
+    try {
+        const { embeds, components } = parseMessage(data[name]);
+
+        await message.channel.send({
+            embeds,
+            components
+        });
+
+    } catch (err) {
+        console.error(err);
+        message.reply('❌ Error al cargar el embed.');
+    }
+    
+    
+    
