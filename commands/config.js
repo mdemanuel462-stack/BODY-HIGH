@@ -1,7 +1,7 @@
 const { PermissionsBitField, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'configcmd',
+    name: 'config',
 
     async execute(message, args) {
 
