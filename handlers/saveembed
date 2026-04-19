@@ -1,1 +1,29 @@
+if (message.content.startsWith('!saveembed')) {
+    const args = message.content.slice(10).trim();
+    const parts = args.split('|');
+
+    const name = parts[0]?.trim();
+    const content = parts.slice(1).join('|').trim();
+
+    if (!name || !content) {
+        return message.reply('❌ Usa: !saveembed nombre | embed');
+    }
+
+    let data = {};
+
+    // Leer archivo si existe
+    if (fs.existsSync('./embeds.json')) {
+        try {
+            data = JSON.parse(fs.readFileSync('./embeds.json', 'utf8'));
+        } catch (err) {
+            data = {};
+        }
+    }
+
+    data[name] = content;
+
+    fs.writeFileSync('./embeds.json', JSON.stringify(data, null, 2));
+
+    message.reply(`✅ Embed guardado como "${name}"`);
+}
 
